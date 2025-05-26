@@ -1,8 +1,14 @@
+import 'dart:math';
 import 'package:financial_management_app/constant.dart';
+import 'package:financial_management_app/model/mony.dart';
+import 'package:financial_management_app/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class NewTransactionsScreen extends StatefulWidget {
   const NewTransactionsScreen({super.key});
+  static int groupId = 0;
+  static TextEditingController descriptionController = TextEditingController();
+  static TextEditingController priceController = TextEditingController();
 
   @override
   State<NewTransactionsScreen> createState() => _NewTransactionsScreenState();
@@ -21,10 +27,33 @@ class _NewTransactionsScreenState extends State<NewTransactionsScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const Text('تراکنش جدید', style: TextStyle(fontSize: 22)),
-              MyTextField(hintText: 'توضیحات'),
-              MyTextField(hintText: 'مبلغ', type: TextInputType.number),
+              MyTextField(
+                hintText: 'توضیحات',
+                controller: NewTransactionsScreen.descriptionController,
+              ),
+              MyTextField(
+                hintText: 'مبلغ',
+                controller: NewTransactionsScreen.priceController,
+                type: TextInputType.number,
+              ),
               TypeAndDateWidget(),
-              MyButton(text: 'اضافه کردن', onPressed: () {}),
+              MyButton(
+                text: 'اضافه کردن',
+                onPressed: () {
+                  HomeScreen.moneys.add(
+                    Money(
+                      id: Random().nextInt(9999),
+                      title: NewTransactionsScreen.descriptionController.text,
+                      price: NewTransactionsScreen.priceController.text,
+                      isReceived: NewTransactionsScreen.groupId == 1
+                          ? true
+                          : false,
+                      date: '1400/01/01',
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+              ),
             ],
           ),
         ),
@@ -51,9 +80,14 @@ class MyButton extends StatelessWidget {
   }
 }
 
-class TypeAndDateWidget extends StatelessWidget {
+class TypeAndDateWidget extends StatefulWidget {
   const TypeAndDateWidget({super.key});
 
+  @override
+  State<TypeAndDateWidget> createState() => _TypeAndDateWidgetState();
+}
+
+class _TypeAndDateWidgetState extends State<TypeAndDateWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -61,14 +95,22 @@ class TypeAndDateWidget extends StatelessWidget {
       children: [
         MyRadioButton(
           value: 1,
-          groupValue: 1000,
-          onChanged: (value) {},
+          groupValue: NewTransactionsScreen.groupId,
+          onChanged: (value) {
+            setState(() {
+              NewTransactionsScreen.groupId = value!;
+            });
+          },
           text: 'دریافتی',
         ),
         MyRadioButton(
-          value: 0,
-          groupValue: 1000,
-          onChanged: (value) {},
+          value: 2,
+          groupValue: NewTransactionsScreen.groupId,
+          onChanged: (value) {
+            setState(() {
+              NewTransactionsScreen.groupId = value!;
+            });
+          },
           text: 'پرداختی',
         ),
 
@@ -102,7 +144,12 @@ class MyRadioButton extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Radio(value: value, groupValue: groupValue, onChanged: onChanged),
+        Radio(
+          activeColor: kPurpleColor,
+          value: value,
+          groupValue: groupValue,
+          onChanged: onChanged,
+        ),
         Text(text, style: TextStyle(color: Colors.black, fontSize: 18)),
       ],
     );
@@ -112,15 +159,18 @@ class MyRadioButton extends StatelessWidget {
 class MyTextField extends StatelessWidget {
   final String hintText;
   final TextInputType type;
+  final TextEditingController controller;
   const MyTextField({
     super.key,
     required this.hintText,
     this.type = TextInputType.text,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       keyboardType: type,
       style: TextStyle(fontSize: 16),
       cursorColor: Colors.red,

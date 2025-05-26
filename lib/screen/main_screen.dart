@@ -16,26 +16,28 @@ class _MainScreenState extends State<MainScreen> {
   Widget body = const HomeScreen();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-        inactiveColor: Colors.black45,
-        icons: const [Icons.home, Icons.info],
-        activeIndex: currentIndex,
-        gapLocation: GapLocation.center,
-        notchSmoothness: NotchSmoothness.smoothEdge,
-        onTap: (index) {
-          if (index == 0) {
-            body = const HomeScreen();
-          } else {
-            body = const InfoScreen();
-          }
-          setState(() {
-            currentIndex = index;
-          });
-        },
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        bottomNavigationBar: AnimatedBottomNavigationBar(
+          inactiveColor: Colors.black45,
+          icons: const [Icons.home, Icons.info],
+          activeIndex: currentIndex,
+          gapLocation: GapLocation.center,
+          notchSmoothness: NotchSmoothness.smoothEdge,
+          onTap: (index) {
+            if (index == 0) {
+              body = const HomeScreen();
+            } else {
+              body = const InfoScreen();
+            }
+            setState(() {
+              currentIndex = index;
+            });
+          },
+        ),
+        body: body,
       ),
-      body: body,
     );
   }
 }
