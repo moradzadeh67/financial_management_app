@@ -1,5 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:financial_management_app/screen/home_screen.dart';
+import 'package:financial_management_app/screen/info_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
           if (index == 0) {
             body = const HomeScreen();
           } else {
-            body = const Center(child: Text("Info"));
+            body = const InfoScreen();
           }
           setState(() {
             currentIndex = index;
