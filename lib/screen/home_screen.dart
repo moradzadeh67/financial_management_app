@@ -1,4 +1,5 @@
 import 'package:financial_management_app/constant.dart';
+import 'package:financial_management_app/screen/new_transactions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
@@ -40,7 +41,14 @@ class MyFloatingActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: kPurpleColor,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NewTransactionsScreen(),
+          ),
+        );
+      },
       child: const Icon(Icons.add),
     );
   }

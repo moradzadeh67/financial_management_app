@@ -24,21 +24,74 @@ class _InfoScreenState extends State<InfoScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 15, top: 20, left: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
-                    Expanded(child: Text('0')),
-                    Text(' : دریافتی امروز'),
-                    Expanded(child: Text('0')),
-                    Text(' : پرداختی امروز'),
-                  ],
-                ),
+              const MonyInfoWidget(
+                firstText: ' : دریافتی امروز ',
+                firstPrice: '0',
+                secondText: ': پرداختی امروز ',
+                secondPrice: '0',
+              ),
+              const MonyInfoWidget(
+                firstText: ' : دریافتی این ماه',
+                firstPrice: '0',
+                secondText: ': پرداختی این ماه',
+                secondPrice: '0',
+              ),
+              const MonyInfoWidget(
+                firstText: ' : دریافتی امسال',
+                firstPrice: '0',
+                secondText: ': پرداختی امسال',
+                secondPrice: '0',
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class MonyInfoWidget extends StatelessWidget {
+  final String firstText;
+  final String secondText;
+  final String firstPrice;
+  final String secondPrice;
+  const MonyInfoWidget({
+    super.key,
+    required this.firstText,
+    required this.secondText,
+    required this.firstPrice,
+    required this.secondPrice,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20, top: 20, left: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Text(
+              secondPrice,
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+          Text(
+            secondText,
+            textAlign: TextAlign.right,
+            style: TextStyle(fontSize: 14),
+          ),
+
+          Expanded(
+            child: Text(
+              firstPrice,
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+          Text(firstText, style: TextStyle(fontSize: 14)),
+        ],
       ),
     );
   }
