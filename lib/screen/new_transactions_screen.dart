@@ -10,7 +10,8 @@ class NewTransactionsScreen extends StatefulWidget {
   static int groupId = 0;
   static TextEditingController descriptionController = TextEditingController();
   static TextEditingController priceController = TextEditingController();
-
+  static bool isEditing = false;
+  static int index = 0;
   @override
   State<NewTransactionsScreen> createState() => _NewTransactionsScreenState();
 }
@@ -28,7 +29,12 @@ class _NewTransactionsScreenState extends State<NewTransactionsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text('تراکنش جدید', style: TextStyle(fontSize: 22)),
+              Text(
+                NewTransactionsScreen.isEditing
+                    ? 'ویرایش تراکنش'
+                    : 'تراکنش جدید',
+                style: TextStyle(fontSize: 22),
+              ),
               MyTextField(
                 hintText: 'توضیحات',
                 controller: NewTransactionsScreen.descriptionController,
@@ -40,19 +46,25 @@ class _NewTransactionsScreenState extends State<NewTransactionsScreen> {
               ),
               TypeAndDateWidget(),
               MyButton(
-                text: 'اضافه کردن',
+                text: NewTransactionsScreen.isEditing
+                    ? ' ویرایش کردن'
+                    : 'اضافه کردن',
                 onPressed: () {
-                  HomeScreen.moneys.add(
-                    Money(
-                      id: Random().nextInt(9999),
-                      title: NewTransactionsScreen.descriptionController.text,
-                      price: NewTransactionsScreen.priceController.text,
-                      isReceived: NewTransactionsScreen.groupId == 1
-                          ? true
-                          : false,
-                      date: '1400/01/01',
-                    ),
+                  Money item = Money(
+                    id: Random().nextInt(9999),
+                    title: NewTransactionsScreen.descriptionController.text,
+                    price: NewTransactionsScreen.priceController.text,
+                    isReceived: NewTransactionsScreen.groupId == 1
+                        ? true
+                        : false,
+                    date: '1400/01/01',
                   );
+                  if (NewTransactionsScreen.isEditing) {
+                    HomeScreen.moneys[NewTransactionsScreen.index] = item;
+                  } else {
+                    // HomeScreen.moneys.add(item);
+                    hiveBox.add(item);
+                  }
                   Navigator.pop(context);
                 },
               ),

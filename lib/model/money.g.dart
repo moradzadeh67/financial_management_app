@@ -17,11 +17,11 @@ class MoneyAdapter extends TypeAdapter<Money> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Money(
-      id: fields[0] as int,
-      title: fields[1] as String,
-      price: fields[2] as String,
-      date: fields[3] as String,
-      isReceived: fields[4] as bool,
+      id: fields[1] as int,
+      title: fields[2] as String,
+      price: fields[3] as String,
+      date: fields[4] as String,
+      isReceived: fields[5] as bool,
     );
   }
 
@@ -29,15 +29,15 @@ class MoneyAdapter extends TypeAdapter<Money> {
   void write(BinaryWriter writer, Money obj) {
     writer
       ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.title)
+      ..write(obj.id)
       ..writeByte(2)
-      ..write(obj.price)
+      ..write(obj.title)
       ..writeByte(3)
-      ..write(obj.date)
+      ..write(obj.price)
       ..writeByte(4)
+      ..write(obj.date)
+      ..writeByte(5)
       ..write(obj.isReceived);
   }
 
