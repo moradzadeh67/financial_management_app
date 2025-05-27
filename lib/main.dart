@@ -1,7 +1,12 @@
+import 'package:financial_management_app/model/money.dart';
 import 'package:financial_management_app/screen/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(MoneyAdapter());
+  await Hive.openBox<Money>('monyBox');
   runApp(const MyApp());
 }
 

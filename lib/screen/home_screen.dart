@@ -1,5 +1,7 @@
+// ignore_for_file: avoid_print
+
 import 'package:financial_management_app/constant.dart';
-import 'package:financial_management_app/model/mony.dart';
+import 'package:financial_management_app/model/money.dart';
 import 'package:financial_management_app/screen/new_transactions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -57,7 +59,53 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.builder(
                   itemCount: HomeScreen.moneys.length,
                   itemBuilder: (context, index) {
-                    return MyListTileWidget(index: index);
+                    return GestureDetector(
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => (AlertDialog(
+                            title: const Text(
+                              'آیا از حذف این آیتم مطمئن هستید؟',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            actionsAlignment: MainAxisAlignment.spaceBetween,
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  'خیر',
+                                  style: TextStyle(
+                                    fontSize: 21,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    HomeScreen.moneys.removeAt(index);
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  'بله',
+                                  style: TextStyle(
+                                    fontSize: 21,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
+                        );
+                      },
+                      child: MyListTileWidget(index: index),
+                    );
                   },
                 ),
               ),
