@@ -14,6 +14,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
   Widget body = const HomeScreen();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

@@ -1,10 +1,12 @@
+import 'package:financial_management_app/utils/calculate.dart';
+import 'package:financial_management_app/utils/extention.dart';
 import 'package:flutter/material.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
 
   @override
-  State<InfoScreen> createState() => _InfoScreenState();
+  _InfoScreenState createState() => _InfoScreenState();
 }
 
 class _InfoScreenState extends State<InfoScreen> {
@@ -17,31 +19,47 @@ class _InfoScreenState extends State<InfoScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 15, top: 15, left: 5),
+              Padding(
+                padding: const EdgeInsets.only(
+                  right: 15.0,
+                  top: 15.0,
+                  left: 5.0,
+                ),
                 child: Text(
-                  'مدیریت تراکنشها به تومان',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  'مدیریت تراکنش ها به تومان',
+                  style: TextStyle(
+                    fontSize: ScreenSize(context).screenWidth < 1004
+                        ? 14
+                        : ScreenSize(context).screenWidth * 0.01,
+                  ),
                 ),
               ),
-              const MonyInfoWidget(
-                firstText: ' : دریافتی امروز ',
-                firstPrice: '0',
-                secondText: ': پرداختی امروز ',
-                secondPrice: '0',
+              MoneyInfoWidget(
+                firstText: ' : دریافتی امروز',
+                firstPrice: Calculate.dToday().toString(),
+                secondText: ' : پرداختی امروز',
+                secondPrice: Calculate.pToday().toString(),
               ),
-              const MonyInfoWidget(
+              MoneyInfoWidget(
                 firstText: ' : دریافتی این ماه',
-                firstPrice: '0',
-                secondText: ': پرداختی این ماه',
-                secondPrice: '0',
+                firstPrice: Calculate.dMonth().toString(),
+                secondText: ' : پرداختی این ماه',
+                secondPrice: Calculate.pMonth().toString(),
               ),
-              const MonyInfoWidget(
+              MoneyInfoWidget(
                 firstText: ' : دریافتی امسال',
-                firstPrice: '0',
-                secondText: ': پرداختی امسال',
-                secondPrice: '0',
+                firstPrice: Calculate.dYear().toString(),
+                secondText: ' : پرداختی امسال',
+                secondPrice: Calculate.pYear().toString(),
               ),
+              const SizedBox(height: 20),
+              // Calculate.dYear() == 0 && Calculate.pYear() == 0
+              //     ? Container()
+              //     : Container(
+              //         padding: const EdgeInsets.all(20.0),
+              //         height: 200,
+              //         child: const BarChartWidget(),
+              //       ),
             ],
           ),
         ),
@@ -50,12 +68,14 @@ class _InfoScreenState extends State<InfoScreen> {
   }
 }
 
-class MonyInfoWidget extends StatelessWidget {
+//! Money Info Widget
+class MoneyInfoWidget extends StatelessWidget {
   final String firstText;
   final String secondText;
   final String firstPrice;
   final String secondPrice;
-  const MonyInfoWidget({
+
+  const MoneyInfoWidget({
     super.key,
     required this.firstText,
     required this.secondText,
@@ -66,7 +86,7 @@ class MonyInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20, top: 20, left: 20),
+      padding: const EdgeInsets.only(right: 20.0, top: 20.0, left: 20.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -74,23 +94,45 @@ class MonyInfoWidget extends StatelessWidget {
             child: Text(
               secondPrice,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(
+                fontSize: ScreenSize(context).screenWidth < 1004
+                    ? 14
+                    : ScreenSize(context).screenWidth * 0.01,
+              ),
             ),
           ),
-          Text(
-            secondText,
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 14),
+          Expanded(
+            child: Text(
+              secondText,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: ScreenSize(context).screenWidth < 1004
+                    ? 14
+                    : ScreenSize(context).screenWidth * 0.01,
+              ),
+            ),
           ),
-
           Expanded(
             child: Text(
               firstPrice,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(
+                fontSize: ScreenSize(context).screenWidth < 1004
+                    ? 14
+                    : ScreenSize(context).screenWidth * 0.01,
+              ),
             ),
           ),
-          Text(firstText, style: TextStyle(fontSize: 14)),
+          Expanded(
+            child: Text(
+              firstText,
+              style: TextStyle(
+                fontSize: ScreenSize(context).screenWidth < 1004
+                    ? 14
+                    : ScreenSize(context).screenWidth * 0.01,
+              ),
+            ),
+          ),
         ],
       ),
     );

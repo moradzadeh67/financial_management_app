@@ -1,9 +1,12 @@
 import 'dart:math';
+
 import 'package:financial_management_app/constant.dart';
+import 'package:financial_management_app/main.dart';
 import 'package:financial_management_app/model/money.dart';
-import 'package:financial_management_app/screen/home_screen.dart';
+import 'package:financial_management_app/utils/extention.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
 class NewTransactionsScreen extends StatefulWidget {
   const NewTransactionsScreen({super.key});
@@ -11,7 +14,8 @@ class NewTransactionsScreen extends StatefulWidget {
   static TextEditingController descriptionController = TextEditingController();
   static TextEditingController priceController = TextEditingController();
   static bool isEditing = false;
-  static int index = 0;
+  static int id = 0;
+  static String date = '';
   @override
   State<NewTransactionsScreen> createState() => _NewTransactionsScreenState();
 }
@@ -33,7 +37,11 @@ class _NewTransactionsScreenState extends State<NewTransactionsScreen> {
                 NewTransactionsScreen.isEditing
                     ? 'ویرایش تراکنش'
                     : 'تراکنش جدید',
-                style: TextStyle(fontSize: 22),
+                style: TextStyle(
+                  fontSize: ScreenSize(context).screenWidth < 1004
+                      ? 14
+                      : ScreenSize(context).screenWidth * 0.015,
+                ),
               ),
               MyTextField(
                 hintText: 'توضیحات',
@@ -44,6 +52,7 @@ class _NewTransactionsScreenState extends State<NewTransactionsScreen> {
                 controller: NewTransactionsScreen.priceController,
                 type: TextInputType.number,
               ),
+              SizedBox(height: 10),
               TypeAndDateWidget(),
               MyButton(
                 text: NewTransactionsScreen.isEditing
@@ -51,16 +60,24 @@ class _NewTransactionsScreenState extends State<NewTransactionsScreen> {
                     : 'اضافه کردن',
                 onPressed: () {
                   Money item = Money(
-                    id: Random().nextInt(9999),
+                    id: Random().nextInt(9999999),
                     title: NewTransactionsScreen.descriptionController.text,
                     price: NewTransactionsScreen.priceController.text,
                     isReceived: NewTransactionsScreen.groupId == 1
                         ? true
                         : false,
-                    date: '1400/01/01',
+                    date: NewTransactionsScreen.date,
                   );
                   if (NewTransactionsScreen.isEditing) {
-                    HomeScreen.moneys[NewTransactionsScreen.index] = item;
+                    int index = 0;
+                    MyApp.getData();
+                    for (int i = 0; i < hiveBox.values.length; i++) {
+                      if (hiveBox.values.elementAt(i).id ==
+                          NewTransactionsScreen.id) {
+                        index = i;
+                      }
+                    }
+                    hiveBox.putAt(index, item);
                   } else {
                     // HomeScreen.moneys.add(item);
                     hiveBox.add(item);
@@ -107,32 +124,67 @@ class _TypeAndDateWidgetState extends State<TypeAndDateWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        MyRadioButton(
-          value: 1,
-          groupValue: NewTransactionsScreen.groupId,
-          onChanged: (value) {
-            setState(() {
-              NewTransactionsScreen.groupId = value!;
-            });
-          },
-          text: 'دریافتی',
+        Expanded(
+          child: MyRadioButton(
+            value: 1,
+            groupValue: NewTransactionsScreen.groupId,
+            onChanged: (value) {
+              setState(() {
+                NewTransactionsScreen.groupId = value!;
+              });
+            },
+            text: 'دریافتی',
+          ),
         ),
-        MyRadioButton(
-          value: 2,
-          groupValue: NewTransactionsScreen.groupId,
-          onChanged: (value) {
-            setState(() {
-              NewTransactionsScreen.groupId = value!;
-            });
-          },
-          text: 'پرداختی',
+        const SizedBox(width: 10),
+        Expanded(
+          child: MyRadioButton(
+            value: 2,
+            groupValue: NewTransactionsScreen.groupId,
+            onChanged: (value) {
+              setState(() {
+                NewTransactionsScreen.groupId = value!;
+              });
+            },
+            text: 'پرداختی',
+          ),
         ),
-
-        OutlinedButton(
-          onPressed: () {},
-          child: const Text(
-            'تاریخ',
-            style: TextStyle(color: Colors.black, fontSize: 18),
+        const SizedBox(width: 10),
+        Expanded(
+          child: SizedBox(
+            height: 50,
+            child: OutlinedButton(
+              onPressed: () async {
+                var pickedDate = await showPersianDatePicker(
+                  context: context,
+                  initialDate: Jalali.now(),
+                  firstDate: Jalali(1400),
+                  lastDate: Jalali(1499),
+                );
+                setState(() {
+                  String year = pickedDate!.year.toString();
+                  //
+                  String month = pickedDate.month.toString().length == 1
+                      ? '0${pickedDate.month.toString()}'
+                      : pickedDate.month.toString();
+                  //
+                  String day = pickedDate.day.toString().length == 1
+                      ? '0${pickedDate.day.toString()}'
+                      : pickedDate.day.toString();
+                  //
+                  NewTransactionsScreen.date = '$year/$month/$day';
+                });
+              },
+              child: Text(
+                NewTransactionsScreen.date,
+                style: TextStyle(
+                  fontSize: ScreenSize(context).screenWidth < 1004
+                      ? 14
+                      : ScreenSize(context).screenWidth * 0.01,
+                  color: Colors.black,
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -164,7 +216,15 @@ class MyRadioButton extends StatelessWidget {
           groupValue: groupValue,
           onChanged: onChanged,
         ),
-        Text(text, style: TextStyle(color: Colors.black, fontSize: 18)),
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: ScreenSize(context).screenWidth < 1004
+                ? 14
+                : ScreenSize(context).screenWidth * 0.01,
+          ),
+        ),
       ],
     );
   }
@@ -199,6 +259,12 @@ class MyTextField extends StatelessWidget {
           borderSide: BorderSide(color: Colors.grey.shade500),
         ),
         hintText: hintText,
+        hintStyle: TextStyle(
+          fontSize: ScreenSize(context).screenWidth < 1004
+              ? 14
+              : ScreenSize(context).screenWidth * 0.012,
+          color: Colors.grey.shade500,
+        ),
       ),
     );
   }
